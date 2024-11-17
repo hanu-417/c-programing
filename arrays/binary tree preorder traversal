@@ -1,0 +1,43 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+
+void rec_fun(struct TreeNode* root, int** arr, int* size_of_tree, int* size_of_array){
+    if (root){
+        (*arr)[(*size_of_tree)++] = root->val;
+        // Checking if the size of the array needs to be increased
+        if(*size_of_tree == *size_of_array){
+            (*size_of_array) *= 2;
+            int* temp = (int*)realloc(*arr, (*size_of_array) * sizeof(int));
+            if (temp == NULL) {
+                // Handle realloc failure
+                free(*arr);
+                exit(1);
+            }
+            *arr = temp;
+        }
+        rec_fun(root->left, arr, size_of_tree, size_of_array);
+        rec_fun(root->right, arr, size_of_tree, size_of_array);
+    }
+    return;
+}
+
+int* preorderTraversal(struct TreeNode* root, int* returnSize) {
+    int size_of_tree = 0, size_of_array = 8;
+    int* arr = (int*)malloc(size_of_array * sizeof(int));
+    if (arr == NULL) {
+        // Handle malloc failure
+        exit(1);
+    }
+    rec_fun(root, &arr, &size_of_tree, &size_of_array);
+    *returnSize = size_of_tree;
+    return arr;
+}
